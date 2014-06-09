@@ -75,9 +75,12 @@ public class SshConnectionManager implements SshKnownHostsManager {
 			session.connect();
             sync();
 			port = session.setPortForwardingL(0, connectionParams.hostName, connectionParams.getPortNumber());
-        } catch (JSchException e) {
+		} catch (JSchException e) {
             session.disconnect();
 			errorMessage = e.getMessage();
+			if (errorMessage == "Auth cancel") {
+				throw new CancelConnectionException(errorMessage);
+			}
 		}
 		return port;
 	}

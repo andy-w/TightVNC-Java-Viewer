@@ -261,4 +261,12 @@ public class Viewer extends JApplet implements Runnable, WindowListener {
 		}
 	}
 
+	public boolean isRfbConnected() {
+		if (connectionPresenter == null) {
+			return false;
+		}
+		else {
+			return connectionPresenter.isRfbConnected();
+		}
+	}
 }

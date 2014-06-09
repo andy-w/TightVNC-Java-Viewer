@@ -38,7 +38,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-
 public class SwingNetworkConnectionWorker extends SwingWorker<Socket, String> implements NetworkConnectionWorker {
     public static final int MAX_HOSTNAME_LENGTH_FOR_MESSAGES = 40;
     private final JFrame parentWindow;
@@ -113,7 +112,7 @@ public class SwingNetworkConnectionWorker extends SwingWorker<Socket, String> im
         } catch (CancellationException e) {
             logger.info("Cancelled");
             presenter.showMessage("Cancelled");
-            presenter.connectionFailed();
+            presenter.connectionCancelled();
         } catch (InterruptedException e) {
             logger.info("Interrupted");
             presenter.showMessage("Interrupted");
@@ -133,8 +132,11 @@ public class SwingNetworkConnectionWorker extends SwingWorker<Socket, String> im
                 errorMessage = "Couldn't connect to '" + formatHostString(connectionParams.hostName) +
                         ":" + connectionParams.getPortNumber() + "':\n" + ioe.getMessage();
             } catch (CancelConnectionException cce) {
-                logger.severe("Cancelled: " + cce.getMessage());
-            } catch (AccessControlException ace) {
+				logger.info("Ssh Cancelled");
+				presenter.showMessage("Ssh Cancelled");
+				presenter.connectionCancelled();
+				return;
+			} catch (AccessControlException ace) {
                 logger.severe("Couldn't connect to: " +
                         connectionParams.hostName + ":" + connectionParams.getPortNumber() +
                         ": " + ace.getMessage());

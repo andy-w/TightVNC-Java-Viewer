@@ -61,6 +61,7 @@ public class ConnectionPresenter extends Presenter {
     private AbstractConnectionWorkerFactory connectionWorkerFactory;
     private NetworkConnectionWorker networkConnectionWorker;
     private boolean needReconnection = true;
+	private boolean isRfbConnected = false;
 
     public ConnectionPresenter(boolean hasSshSupport, boolean allowInteractive) {
         this.hasSshSupport = hasSshSupport;
@@ -118,6 +119,7 @@ public class ConnectionPresenter extends Presenter {
     }
 
     private void connect() {
+		isRfbConnected = false;
         final ConnectionParams connectionParams = (ConnectionParams) getModel(CONNECTION_PARAMS_MODEL);
         // TODO check connectionWorkerFactory is init
         networkConnectionWorker = connectionWorkerFactory.createNetworkConnectionWorker();
@@ -137,6 +139,7 @@ public class ConnectionPresenter extends Presenter {
     }
 
     public void connectionCancelled() {
+		logger.info("connectionCancelled");
         cancelConnection();
         if (allowInteractive) {
             enableConnectionDialog();
@@ -167,9 +170,11 @@ public class ConnectionPresenter extends Presenter {
     public void successfulRfbConnection() {
         enableConnectionDialog();
         getView(CONNECTION_VIEW).closeView();
+		isRfbConnected = true;
     }
 
     public void cancelConnection() {
+		isRfbConnected = false;
         if (networkConnectionWorker != null) {
             networkConnectionWorker.cancel();
         }
@@ -287,4 +292,8 @@ public class ConnectionPresenter extends Presenter {
     public boolean allowInteractive() {
         return allowInteractive;
     }
+	
+	public boolean isRfbConnected() {
+		return isRfbConnected;
+	}
 }
